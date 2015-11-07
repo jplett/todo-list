@@ -1,45 +1,70 @@
 def add(item):
-	"""Adds an item to the list."""
-	todos.append(item)  ##it might be possible to add len=0 items (eg blanks).
-	print "Added."
+    """Adds an item to the list."""
+    if len(item) > 0:
+        todos.append(item)
+        print "Added."
+    else:
+        print "Item too short."
 
-def remove(item):
+def item_convert(item):
+    """Converts item into the index # for deleting / finishing"""
+    item = int(item)-1
+    return item
+        
+def finish(item):
 	"""Removes an item from the list. Accepts an int. """ ## might be useful to also allow removing a full item, eg try that first and if it excepts, try INT. this is handy for big items.
 	try: 
-		item = int(item)-1
+   		item = item_convert(item)
 		done.append(todos[item])
-		todos.pop(item)
-		print "Deleted."
+		del_item(item+1)
+		return "Item finished! Congratulations!"
 	except Exception:
-		print "Fail"
-	
+		return "Fail."
+
+def modify(item):
+    """Modifies an item specified from user."""
+    try:
+        item = int(item)-1
+        print "Changing item " + todos[item]
+        todos.pop(item)
+        todos.insert(item,(raw_input("Change item to: ")))
+    except Exception:
+        print "Fail."
+
+def del_item(item):
+    try:
+        item = item_convert(item)
+        todos.pop(item)
+        return "Item deleted."
+    except Exception:
+        return "Fail."
+               
 def print_todo():
-	print "Todo:" ## just prints the to-dos. would be preferable when you have a lot of finished items.
-	for i in range(0,(len(todos))):
-		print "%s. %s"%(i+1,todos[i])
+    """Prints to-do items only (eg not finished items)"""
+    print "Todo:" ## just prints the to-dos. would be preferable when you have a lot of finished items.
+    for i in range(0,(len(todos))):
+        print "%s. %s"%(i+1,todos[i])
 
 def print_done():
-	print "Finished:" ## just prints finished items.
-	for i in range(0,(len(done))):
-		print "%s. %s"%(i+1,done[i])
+    """Prints finished items only (eg not todos)"""
+    print "Finished:" ## just prints finished items.
+    for i in range(0,(len(done))):
+        print "%s. %s"%(i+1,done[i])
 		
 def print_all(): 
-	"""Prints lists."""
-	print_todo() ##prints all the items
-	print ""
-	print_done()
+    """Prints lists."""
+    print_todo() ##prints all the items
+    print "\n"
+    print_done()
 
 def write_to_file(filename):
 	"""Writes to a user-specified file."""
-#	filename = "todo.txt"
-#	print "Name the list. Default is %s"%filename
-#	filename = raw_input(prompt)
-	print "Are you sure you want to write to %s?"%filename
-	print "This will overwrite the file."
-	go = raw_input("Y/N? ")
-	if go.lower() == "y": ##JUST CHECKING!
+	print "This will overwrite the file if it already exists."
+	print "Write to %s? (Y/N)"%filename
+	go = raw_input(prompt)
+	if go[0].lower() == "y": ##JUST CHECKING!
 		target = open(filename, 'w')
-		print "Truncating."
+		print "Writing..."
 		target.truncate()
 		target.write("Todo\n")
 		for i in range(0,len(todos)):
@@ -53,7 +78,7 @@ def write_to_file(filename):
 	else:
 		pass
 
-def read_from_file(todo,done):
+def read_from_file():
 	"""Reads from a designated file and populates a "todo" and "done" list. It *adds* to these lists, so if there are existing items they won't be removed. Allows one to merge lists."""
 	filename = "todo.txt"
 	print "Name the list. Default is %s"%filename
@@ -68,48 +93,108 @@ def read_from_file(todo,done):
 				done.append(list[i].rstrip('\n'))
 			print "Items added."
 		except ValueError:
-			print "List is invalid. Required 'Done' to be in the list."
+			print "List is invalid, possibly corrupt."
 	except EnvironmentError:
 		print "No such file!"
+
+def dict_creator(list,action):
+    """Creates dictionaries for this"""
+    for i in range(0,len(list)):
+        cmnd[list[i]] = action
 	
-	
-	
+def ret_dict_list(command):
+    """Returns dict list"""
+    print "To %s, try:"%command  ##this is probably stupid.
+    for i in range(0,len(cmnd)):
+        if cmnd.values()[i] == command:
+            print cmnd.keys()[i],
+
+def help():
+    """Prints possible commands."""
+    ret_dict_list('add')
+    print "\n...then enter the phrase you'd like to add.\n"
+    ret_dict_list('finish')
+    print "\n...then enter the item's number.\n"
+    ret_dict_list('modify')
+    print "\n...then enter an item to modify.\n"
+    ret_dict_list('delete')
+    print "\n...delete an item from your todo list, for good.\n"
+    ret_dict_list('print')
+    print "\n"
+    ret_dict_list('save')
+    print "\n...then enter the filename.\n"
+    ret_dict_list('load')
+    print "\n...then enter the filename.\n"
+    print "Finally, to quit, just type 'quit' or 'exit."
+                     
+def quitter():
+    quit = raw_input("Save before quitting? Y/N: ")
+    if quit[0].lower() == "y":
+        write_to_file(raw_input("Please give filename: "))
+    else:
+        pass
+    print "Quitting. Goodbye!"
+    return 0
+    
+def todolist():
+    print ""
+    q = raw_input(prompt).split()
+    print ""
+    try:
+        action = cmnd[q[0]]
+        if action == "add":
+            add(raw_input("Item to add: "))
+        if action == "finish":
+            print finish(raw_input("Item to finish: "))
+        if action == "delete":
+            print del_item(raw_input("Item to delete: "))
+        if action == "save":
+            write_to_file(raw_input("Enter a filename (.txt preferred): "))
+        if action == "load":
+            print "Loading will combine your existing list with the specified list."
+            read_from_file()
+        if action == "print":
+            print_all()
+        if action == "modify":
+            modify(raw_input("Item to modify: "))
+        if action == "quit":
+            return quitter() ##quitter returns 0; this returns 0 to the loop, which ends it.   
+    except KeyError:
+        help()
+    return 1 ## this returns a 1 to the loop, which means the variable is still true and the loop doesn't end.
+
+def dict_initialize(cmnd):
+    """Intitializes dictionary."""
+    dict_creator(add_cmd,'add')
+    dict_creator(print_cmd,'print')
+    dict_creator(fin_cmd,'finish')
+    dict_creator(mod_cmd,'modify')
+    dict_creator(del_cmd,'delete')
+    dict_creator(save_cmd,'save')
+    dict_creator(load_cmd,'load')
+    dict_creator(quit_cmd,'quit')
+    
 todos = []
 done = []
 prompt = "> "
-
 run = 1
+
+cmnd = {}
+add_cmd = ['add', 'do', 'create', 'task']
+print_cmd = ['print', 'print-all']
+fin_cmd = ['finish']
+del_cmd = ['delete', 'remove']
+save_cmd = ['save', 'write']
+load_cmd = ['load', 'read']
+mod_cmd = ['modify', 'change']
+quit_cmd = ['quit', 'exit']    
+
+dict_initialize(cmnd)
+
+print "Type 'help' for a list of commands."
+    
 while run == 1: ## this should be turned into a function or something?
-	action = raw_input(prompt)
-	action = action.split()
-	to_add = ""
-	if action[0] == "add" or action[0] == "do": ## maybe adding should be the default? like, "pop 1" or "delete 1" should delete 1, but "go to the dentist" should add "go to the dentist".
-		action.pop(0)
-		for i in range(0,len(action)):
-			to_add = to_add + " " + action[i]  ##this is hideous and there has to be a better way to do this.
-		add(to_add.strip())
-	if action[0] == "print" or action[0] == "print-all":
-		print_all()
-	if action[0] == "pop" or action[0] == "remove" or action[0] == "finished" or action[0] == "finish":
-		remove((action[1]))
-	if action[0] == "write":
-		write_to_file(action[1])
-	if action[0] == "read":
-		read_from_file(todos,done)
-	if action[0] == "wipe":
-		print "Wiping list."
-		print "Saving backup, just in case!"
-		write_to_file("backup.txt")
-		todos = []
-		done = []
-	if action[0] == "quit":
-		quit = raw_input("Save before quitting? Y/N :")
-		if quit.lower() == "y":
-			write_to_file(raw_input("Please give filename: "))
-		else:
-			pass
-		run = 0
-		
-		
-	print ""
-	
+    run = todolist()
+
+
+
