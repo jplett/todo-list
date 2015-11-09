@@ -25,9 +25,10 @@ def modify(item):
     """Modifies an item specified from user."""
     try:
         item = int(item)-1
-        print "Changing item " + todos[item]
+        print "Changing item: " + todos[item]
         todos.pop(item)
         todos.insert(item,(raw_input("Change item to: ")))
+        print "Item changed."
     except Exception:
         print "Fail."
 
@@ -182,11 +183,11 @@ run = 1
 cmnd = {}
 add_cmd = ['add', 'do', 'create', 'task']
 print_cmd = ['print', 'print-all']
-fin_cmd = ['finish']
+fin_cmd = ['finish', 'done', 'complete']
 del_cmd = ['delete', 'remove']
 save_cmd = ['save', 'write']
 load_cmd = ['load', 'read']
-mod_cmd = ['modify', 'change']
+mod_cmd = ['modify', 'change', 'edit', 'fix', 'correct']
 quit_cmd = ['quit', 'exit']    
 
 dict_initialize(cmnd)
