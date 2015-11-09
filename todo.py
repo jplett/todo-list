@@ -193,7 +193,7 @@ dict_initialize(cmnd)
 
 print "Type 'help' for a list of commands."
     
-while run == 1: ## this should be turned into a function or something?
+while run == 1: 
     run = todolist()
 
 
