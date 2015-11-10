@@ -57,33 +57,27 @@ def print_all():
     print_todo() ##prints all the items
     print "\n"
     print_done()
-
+    
+    
 def write_to_file(filename):
-	"""Writes to a user-specified file."""
-	print "This will overwrite the file if it already exists."
-	print "Write to %s? (Y/N)"%filename
-	go = raw_input(prompt)
-	if go[0].lower() == "y": ##JUST CHECKING!
-		target = open(filename, 'w')
-		print "Writing..."
-		target.truncate()
-		target.write("Todo\n")
-		for i in range(0,len(todos)):
-			target.write(todos[i])
-			target.write("\n")
-		target.write("Done\n")
-		for i in range(0,len(done)):
-			target.write(done[i])
-			target.write("\n")
-		print "Finished."
-	else:
-		pass
+    """Writes to a user-specified file."""
+    target = open(filename, 'w')
+    target.truncate()
+    target.write("Todo\n")
+    for i in range(0,len(todos)):
+        target.write(todos[i])
+        target.write("\n")
+    target.write("Done\n")
+    for i in range(0,len(done)):
+        target.write(done[i])
+        target.write("\n")
+    return "Finished."
+    
 
-def read_from_file():
+def read_from_file(filename):
 	"""Reads from a designated file and populates a "todo" and "done" list. It *adds* to these lists, so if there are existing items they won't be removed. Allows one to merge lists."""
-	filename = "todo.txt"
-	print "Name the list. Default is %s"%filename
-	filename = raw_input(prompt)
+	##filename = "todo.txt"
+	#print "Reading from %s."%filename
 	try:
 		txt = open(filename)
 		list = txt.readlines()
@@ -92,11 +86,11 @@ def read_from_file():
 				todos.append(list[i].rstrip('\n'))
 			for i in range(list.index('Done\n')+1,len(list)):
 				done.append(list[i].rstrip('\n'))
-			print "Items added."
+			return "Items added."
 		except ValueError:
-			print "List is invalid, possibly corrupt."
+			return "List is invalid, possibly corrupt."
 	except EnvironmentError:
-		print "No such file!"
+		return "No such file!"
 
 def dict_creator(list,action):
     """Creates dictionaries for this"""
@@ -126,7 +120,8 @@ def help():
     print "\n...then enter the filename.\n"
     ret_dict_list('load')
     print "\n...then enter the filename.\n"
-    print "Finally, to quit, just type 'quit' or 'exit."
+    print "\n This will autosave every action, so don't worry about losing your changes."
+    print "Finally, to quit, just type 'quit'."
                      
 def quitter():
     quit = raw_input("Save before quitting? Y/N: ")
@@ -150,10 +145,17 @@ def todolist():
         if action == "delete":
             print del_item(raw_input("Item to delete: "))
         if action == "save":
-            write_to_file(raw_input("Enter a filename (.txt preferred): "))
+            filename = raw_input("Enter a filename (.txt preferred): ")   ##save and write raw_inputs should be a function.
+            print "This will overwrite the file if it already exists."
+            print "Write to %s? (Y/N)"%filename 
+            go = raw_input(prompt)
+            if go[0].lower() == "y": ##JUST CHECKING!
+                print write_to_file(filename)
+            else:
+                pass
         if action == "load":
             print "Loading will combine your existing list with the specified list."
-            read_from_file()
+            print read_from_file(raw_input("Enter a filename (.txt preferred): "))
         if action == "print":
             print_all()
         if action == "modify":
@@ -162,6 +164,7 @@ def todolist():
             return quitter() ##quitter returns 0; this returns 0 to the loop, which ends it.   
     except KeyError:
         help()
+    write_to_file("autosave.txt")
     return 1 ## this returns a 1 to the loop, which means the variable is still true and the loop doesn't end.
 
 def dict_initialize(cmnd):
@@ -193,7 +196,9 @@ quit_cmd = ['quit', 'exit']
 dict_initialize(cmnd)
 
 print "Type 'help' for a list of commands."
-    
+filename = "todo.txt"
+print "Loading from %s"%filename
+print read_from_file(filename)
 while run == 1: 
     run = todolist()
 
