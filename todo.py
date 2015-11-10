@@ -99,7 +99,7 @@ def dict_creator(list,action):
 	
 def ret_dict_list(command):
     """Returns dict list"""
-    print "To %s, try:"%command  ##this is probably stupid.
+    print "To %s, try:"%command  ##this is probably stupid. descriptions should maybe be a separate list or something.
     for i in range(0,len(cmnd)):
         if cmnd.values()[i] == command:
             print cmnd.keys()[i],
@@ -107,7 +107,7 @@ def ret_dict_list(command):
 def help():
     """Prints possible commands."""
     ret_dict_list('add')
-    print "\n...then enter the phrase you'd like to add.\n"
+    print "\n...then enter the phrase you'd like to add.\n" 
     ret_dict_list('finish')
     print "\n...then enter the item's number.\n"
     ret_dict_list('modify')
@@ -121,7 +121,7 @@ def help():
     ret_dict_list('load')
     print "\n...then enter the filename.\n"
     print "\n This will autosave every action, so don't worry about losing your changes."
-    print "Finally, to quit, just type 'quit'."
+    print "Finally, to quit, just type 'quit'." ##turn this into a dict.
                      
 def quitter():
     quit = raw_input("Save before quitting? Y/N: ")
