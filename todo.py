@@ -100,6 +100,7 @@ def dict_creator(list,action):
 def ret_dict_list(command):
     """Returns dict list"""
     x = []
+    print "To %s, try:"%command  ##this is probably stupid. descriptions should maybe be a separate list or something.
     for i in range(0,len(cmnd)):
         if cmnd.values()[i] == command:
             x.append(cmnd.keys()[i])
@@ -128,6 +129,9 @@ def help():
     a = "\nFinally, please note this program will save your list"
     b = "automatically after every action. The file is autosave.txt."
     print a, b
+    print "\n...then enter the filename.\n"
+    print "\n This will autosave every action, so don't worry about losing your changes."
+    print "Finally, to quit, just type 'quit'." ##turn this into a dict.
                      
 def quitter():
     filename = "autosave.txt"
