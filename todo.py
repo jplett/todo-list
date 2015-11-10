@@ -72,7 +72,7 @@ def write_to_file(filename):
         target.write(done[i])
         target.write("\n")
     return "Finished."
-    
+
 
 def read_from_file(filename):
 	"""Reads from a designated file and populates a "todo" and "done" list. It *adds* to these lists, so if there are existing items they won't be removed. Allows one to merge lists."""
@@ -99,39 +99,59 @@ def dict_creator(list,action):
 	
 def ret_dict_list(command):
     """Returns dict list"""
-    print "To %s, try:"%command  ##this is probably stupid.
+    x = []
     for i in range(0,len(cmnd)):
         if cmnd.values()[i] == command:
-            print cmnd.keys()[i],
+            x.append(cmnd.keys()[i])
+    print ', '.join(x)
 
 def help():
     """Prints possible commands."""
+    print "To 'add' items, try typing:"
     ret_dict_list('add')
-    print "\n...then enter the phrase you'd like to add.\n"
+    print "\nTo mark an item as 'finished,' try typing:"
     ret_dict_list('finish')
-    print "\n...then enter the item's number.\n"
+    print "\nTo change a todo item, try:"
     ret_dict_list('modify')
-    print "\n...then enter an item to modify.\n"
+    print "\nTo delete a todo item, try:"
     ret_dict_list('delete')
-    print "\n...delete an item from your todo list, for good.\n"
+    print "\nTo print your list, try:"
     ret_dict_list('print')
-    print "\n"
+    print "\nTo save your list, try:"
     ret_dict_list('save')
-    print "\n...then enter the filename.\n"
+    print "\nTo load and merge a list, try:"
     ret_dict_list('load')
-    print "\n...then enter the filename.\n"
-    print "\n This will autosave every action, so don't worry about losing your changes."
-    print "Finally, to quit, just type 'quit'."
+    print "\nTo wipe your current list, try:"
+    ret_dict_list('new')
+    print "\nTo quit, try:"
+    ret_dict_list('quit')
+    a = "\nFinally, please note this program will save your list"
+    b = "automatically after every action. The file is autosave.txt."
+    print a, b
                      
 def quitter():
+    filename = "autosave.txt"
+    print "Quitting will truncate %s."%filename
     quit = raw_input("Save before quitting? Y/N: ")
     if quit[0].lower() == "y":
         write_to_file(raw_input("Please give filename: "))
     else:
         pass
+    target = open(filename, 'w')
+    target.truncate()
     print "Quitting. Goodbye!"
     return 0
+
+def new_list():
+    print "Wiping lists."
+    x = raw_input("Save first Y/N? ")
+    if x.lower()=="y":
+        filename = raw_input("Enter a filename (.txt preferred): ")
+        print write_to_file(filename)
+    else:
+        pass
     
+
 def todolist():
     print ""
     q = raw_input(prompt).split()
@@ -160,6 +180,10 @@ def todolist():
             print_all()
         if action == "modify":
             modify(raw_input("Item to modify: "))
+        if action == "new": ##this doesnt work.
+            new_list()
+            todos = ['']
+            done = ['']
         if action == "quit":
             return quitter() ##quitter returns 0; this returns 0 to the loop, which ends it.   
     except KeyError:
@@ -177,6 +201,7 @@ def dict_initialize(cmnd):
     dict_creator(save_cmd,'save')
     dict_creator(load_cmd,'load')
     dict_creator(quit_cmd,'quit')
+    dict_creator(new_cmd,'new')
     
 todos = []
 done = []
@@ -191,8 +216,8 @@ del_cmd = ['delete', 'remove']
 save_cmd = ['save', 'write']
 load_cmd = ['load', 'read']
 mod_cmd = ['modify', 'change', 'edit', 'fix', 'correct']
-quit_cmd = ['quit', 'exit']    
-
+quit_cmd = ['quit', 'exit', 'close']    
+new_cmd = ['new list', 'new', 'wipe']
 dict_initialize(cmnd)
 
 print "Type 'help' for a list of commands."
